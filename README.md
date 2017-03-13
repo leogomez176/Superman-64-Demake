@@ -1,2 +1,4 @@
 # Superman-64-Demake
-164 Project for UCSC
+Superman 64 Demake
+by Koosha, Leo, and Nick
+- A 164 Project for UCSC
