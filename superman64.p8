@@ -38,7 +38,7 @@ function move_player(p1)
 		return
 end
 	
-	accel = .03
+	accel = .05
 	
 	--player controls
 	if(btn(0))then
@@ -91,7 +91,12 @@ function move_actor(actor)
 	
 	actor.x += actor.dx
 	actor.y += actor.dy
-end
+	
+	if actor.x <= 0 then actor.x = 1 actor.dx = 0 end
+	if actor.x >= 110 then actor.x = 108 actor.dx = 0 end
+	if actor.y <= 0 then actor.y = 1 actor.dy = 0 end
+	if actor.y >= 120 then actor.y = 118 actor.dy = 0 end
+	end
 
 function _update60()
 	--move actors
