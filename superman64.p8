@@ -121,19 +121,17 @@ function _update60()
 	--check for win/lose
 end
 
-function draw_actor()
-	for a in all(actors) do
+function draw_actor(a)
 	 spr(a.frame,
 	    a.x,
 	    a.y,
 		a.w,
 		a.h)
-	end
 end
 
 function _draw()
  cls()
- draw_actor()
+ foreach(actors,draw_actor)
  --set camera
  --draw actors and map
  --foreach(actors,draw_actor)
