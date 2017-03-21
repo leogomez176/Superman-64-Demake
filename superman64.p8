@@ -11,7 +11,9 @@ function _init()
 	level2={}
 	level3={}
 	level = 1
+	x_dist = 0
 	rings = 0
+	next = false 
 	run_level1()
 end
 
@@ -107,7 +109,8 @@ function move_player(p1)
 		p1.dy = p1.dy - accel; p1.d=2 end
 	if(btn(3))then
 		p1.dy = p1.dy + accel; p1.d=3 end	
-			
+	
+	x_dist += 1
 end
 
 function update_ring(r)
@@ -164,12 +167,30 @@ function move_actor(actor)
 	if actor.y >= 120 then actor.y = 118 actor.dy = 0 end
 end
 
+function move_map()
+	if x_dist%5 == 0 then
+		for b in all(level1) do
+			b.x -= 8
+			if(b.x < 0)then b.x = 120 end
+		end
+	end
+end
+
+function check_win_lose()
+	if next then
+		level += 1
+		next = false
+	end
+end
+
 function _update60()
 	--move actors
 	foreach(actors, move_actor)
 	--move effects
+	move_map()
 	--collision detection
 	--check for win/lose
+	check_win_lose()
 end
 
 function draw_actor(a)
@@ -195,10 +216,10 @@ end
 function _draw()
  cls()
  --set camera
+ --draw background
  --draw actors and map
  foreach(level1,draw_map_block)
  foreach(actors,draw_actor)
- --draw background
  --draw hud
  --draw end result
 end
