@@ -3,14 +3,27 @@ version 8
 __lua__
 -- superman 64 demade
 -- by da-best
-i = 0
-level = 1
-rings = 0
 
 function _init()
 	cls()
 	actors={}
+	level = 1
+	rings = 5
+	run_level1()
+end
+
+function run_level1()
 	player = make_player(64,64,1)
+	for i=1,rings do
+		make_ring(rnd(100),rnd(100),1)
+	end
+end
+
+function run_level2()
+	
+end
+
+function run_level3()
 	
 end
 
@@ -20,14 +33,14 @@ function make_actor(kind,x,y,d,w,h)
 	a.life = 1
 	a.x=x a.y=y a.dx=0 a.dy=0
 --	a.ddy=0.06 --gravity
-	a.w=w a.h=h --half-width
+	a.w=w a.h=h
 	a.d=d
  add(actors,a)
  return a
 end
 
 function make_player(x,y,d)
-	p1 = make_actor(0,x,y,d,2,1)
+	local p1 = make_actor(0,x,y,d,2,1)
 	p1.score = 0
 	p1.id = 0 --player 1
 	p1.frame = 1
@@ -35,8 +48,9 @@ function make_player(x,y,d)
 end
 
 function make_ring(x,y,d)
-	r = make_actor(1,x,y,d,1,1)
+	local r = make_actor(1,x,y,d,1,1)
 	r.frame = 25
+	r.i = 0
 	return r
 end
 
@@ -45,7 +59,7 @@ function move_player(p1)
 		del(actors,p1)
 		music(-1)
 		return
-end
+	end
 	
 	accel = .05
 	
@@ -62,16 +76,15 @@ end
 end
 
 function update_ring(r)
-		i = i + 1
-	if i == 41 then i = 0 end
-	if i <=10 then r.frame = 24
- else if i >10 and i <= 20 then r.frame = 40
- else if i > 20 and i <= 30 then r.frame = 56
- else if i > 30 and i <= 40 then r.frame = 25
- end
- end
- end
- end
+	r.i += 1
+	if r.i == 41 then
+		r.i = 0 
+	end
+	if r.i <=10 then 
+		r.frame = 24
+	elseif r.i >10 and r.i <= 20 then r.frame = 40
+	elseif r.i > 20 and r.i <= 30 then r.frame = 56
+	elseif r.i > 30 and r.i <= 40 then r.frame = 25 end
 end
 
 function move_obstacle(o)
@@ -114,7 +127,7 @@ function move_actor(actor)
 	if actor.x >= 110 then actor.x = 108 actor.dx = 0 end
 	if actor.y <= 0 then actor.y = 1 actor.dy = 0 end
 	if actor.y >= 120 then actor.y = 118 actor.dy = 0 end
-	end
+end
 
 function _update60()
 	--move actors
@@ -122,24 +135,17 @@ function _update60()
 	--move effects
 	--collision detection
 	--check for win/lose
-	if(level == 1 and rings <= 3) then 
-		make_ring(rnd(100),rnd(100),1)
-		rings+= 1
-	end
 end
 
 function draw_actor(a)
 	if(a.d == 1) then
 	 spr(a.frame,a.x,a.y,a.w,a.h)
-	else if (a.d == 0) then
+	elseif (a.d == 0) then
 	 spr(a.frame,a.x,a.y,a.w,a.h,1)
- else if (a.d == 2) then
+	elseif (a.d == 2) then
 	 spr(16,a.x,a.y,1,2)
-	else if (a.d == 3) then
+	elseif (a.d == 3) then
 	 spr(16,a.x,a.y,1,2,1,1)
-	end
-	end
-	end
 	end
 end
 
@@ -148,7 +154,6 @@ function _draw()
  foreach(actors,draw_actor)
  --set camera
  --draw actors and map
- --foreach(actors,draw_actor)
  --draw background
  --draw hud
  --draw end result
