@@ -249,9 +249,11 @@ function collide_event(a1,a2)
  if a2.kind == 1 then
   a2.i = 100
   rings -= 1
-  timer += .5r
+  timer += .8
+  del(actors,a2)
+  
  end 
-end 
+end
  
 function update_ring(r)
 	r.i += 1
@@ -265,8 +267,8 @@ function update_ring(r)
 	elseif r.i > 30 and r.i <= 40 then r.frame = 25
 	elseif r.i >= 100 and r.i < 110 then r.frame = 41
 	elseif r.i >= 110 and r.i < 125 then r.frame = 57
-	elseif r.i == 125 then del(actors,r) end
-	end
+	elseif r.i == 125 then  end
+end
 
 function move_obstacle(o)
 	
@@ -336,6 +338,11 @@ function check_win_lose()
 end
 
 function _update60()
+	if(player.life == 0) then
+		if btn(4) then 
+			player.life = 1 _init() 
+		end
+	end
 	--move actors
 	foreach(actors, move_actor)
 	--move effects
@@ -367,15 +374,22 @@ function draw_map_block(b)
 end
 
 function _draw()
- cls()
- --set camera
- --draw background
- --draw actors and map
- foreach(currentlvl,draw_map_block)
- foreach(actors,draw_actor)
- print("“:" .. flr(timer),10,10,8)
- --draw hud
- --draw end result
+ if player.life == 0 then
+	cls()
+	print("hit z to try again!",50,50)
+	spr(3,7,95,3,5)
+	spr(50,0,120,6,1)
+ else 
+	cls()
+	--set camera
+	--draw background
+	--draw actors and map
+	foreach(currentlvl,draw_map_block)
+	foreach(actors,draw_actor)
+	print("“:" .. flr(timer),10,10,8)
+	--draw hud
+	--draw end result
+ end
 end
 
 __gfx__
