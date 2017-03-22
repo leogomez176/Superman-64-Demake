@@ -373,7 +373,7 @@ function _update60()
 	collisions()
 	--check for win/lose
 	check_win_lose()
-	if(x_dist%120 == 0 and rings < max_rings) then
+	if(x_dist%120 == 0 and rings < max_rings and level==1) then
 		make_ring(136,prev_r.y + 20 - rnd(40),1)
 	end
 end
