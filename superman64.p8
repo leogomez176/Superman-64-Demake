@@ -16,6 +16,7 @@ function _init()
 	level = 0
 	x_dist = 0
 	prev_r = {}
+	score = 0
 	--inits
 	rings = 0
     enemies = 0
@@ -293,6 +294,7 @@ function collide_event(a1,a2)
   player.score += 1
   timer += .8
   del(actors,a2)
+  score = score + 1
  elseif a2.kind == 2 or a2.kind == 4 then
     player.life = 0
  end
@@ -449,6 +451,7 @@ function _draw()
  if player.life == 0 then
 	cls()
 	print("hit z to try again!",50,50)
+	print("Åfinal score: ".. score,50,70)
 	spr(3,7,95,3,5)
 	spr(50,0,120,6,1)
  else 
@@ -459,7 +462,7 @@ function _draw()
 	foreach(currentlvl,draw_map_block)
 	foreach(actors,draw_actor)
 	print("ì:" .. flr(timer),10,10,8)
-
+print("score:" .. score,90,10,8)
 	--draw hud
 	--draw end result
  end
