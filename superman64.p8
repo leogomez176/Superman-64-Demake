@@ -21,6 +21,7 @@ function _init()
 	next = false
 	make_levels() 
 	run_level1()
+	music(0)
 end
 
 function make_levels()
@@ -563,7 +564,7 @@ __music__
 00 39393c3b
 00 39393c3b
 00 39393c3b
-00 3d3e3f03
+02 3d3e3f03
 00 41424344
 00 41424344
 00 41424344
@@ -582,3 +583,4 @@ __music__
 00 41424344
 00 41424344
 00 41424344
+
