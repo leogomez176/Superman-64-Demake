@@ -22,6 +22,7 @@ function _init()
 	make_levels() 
 	run_level1()
 	music(0)
+end
 
 function make_levels()
 	--level 1
