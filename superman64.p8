@@ -176,7 +176,7 @@ function make_actor(kind,x,y,d,w,h)
 	a.kind = kind
 	a.life = 1
 	a.x=x a.y=y a.dx=0 a.dy=0
---	a.ddy=0.06 --gravity
+	a.ddy=0.06 --gravity
 	a.w=w a.h=h
 	a.d=d
  add(actors,a)
@@ -325,7 +325,11 @@ function move_obstacle(o)
 end
 
 function move_car(c)
-	
+    if(c.y < 100) then
+        c.dy += c.ddy
+    else
+        c.dy = 0
+    end
 end
 
 function move_enemy(e)
