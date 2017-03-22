@@ -156,7 +156,9 @@ function collide_event(a1,a2)
  if a2.kind == 1 then
   a2.i = 100
   rings -= 1
-  timer += .5r
+  timer += .8
+  del(actors,a2)
+  
  end 
 end 
  
@@ -172,7 +174,7 @@ function update_ring(r)
 	elseif r.i > 30 and r.i <= 40 then r.frame = 25
 	elseif r.i >= 100 and r.i < 110 then r.frame = 41
 	elseif r.i >= 110 and r.i < 125 then r.frame = 57
-	elseif r.i == 125 then del(actors,r) end
+	elseif r.i == 125 then  end
 	end
 
 function move_obstacle(o)
@@ -252,6 +254,9 @@ function _update60()
 	collisions()
 	--check for win/lose
 	check_win_lose()
+	if(rings < 5) then 
+	make_ring(rnd(100),rnd(100),1)
+	end
 end
 
 function draw_actor(a)
@@ -563,7 +568,7 @@ __music__
 00 39393c3b
 00 39393c3b
 00 39393c3b
-00 3d3e3f03
+02 3d3e3f03
 00 41424344
 00 41424344
 00 41424344
@@ -582,3 +587,4 @@ __music__
 00 41424344
 00 41424344
 00 41424344
+
