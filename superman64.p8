@@ -20,7 +20,7 @@ function _init()
 	timer = 6
 	next = false
 	make_levels() 
-	run_level1()
+	run_level2()
 	music(0) 
 end
 
@@ -137,9 +137,6 @@ function run_level2()
 	actors = {}
 	currentlvl = level2
 	player = make_player(64,64,1)
-	for i=1,5 do
-		make_ring(rnd(100),rnd(100),1)
-	end
 end
 
 function run_level3()
@@ -365,11 +362,19 @@ function draw_actor(a)
 end
 
 function draw_map_block(b)
-	spr(b.kind,
-	    b.x-x_dist,
-		b.y,
-		b.w,
-		b.h)
+	if(level == 1) then
+		spr(b.kind,
+			b.x-x_dist,
+			b.y,
+			b.w,
+			b.h)
+	else
+		spr(b.kind,
+			b.x,
+			b.y,
+			b.w,
+			b.h)
+	end
 end
 
 function _draw()
