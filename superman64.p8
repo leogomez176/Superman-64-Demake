@@ -18,11 +18,13 @@ function _init()
 	prev_r = {}
 	--inits
 	rings = 0
+    enemies = 0
 	timer = 6
 	max_rings = 5
+    max_enemies = 5
 	next = false
 	make_levels() 
-	run_level2()
+	run_level1()
 	music(0) 
 end
 
@@ -130,10 +132,11 @@ end
 
 function run_level1()
 	level = 1
+    timer = 26
 	actors={}
 	currentlvl = level1
 	player = make_player(64,64,1)
-	make_obstacle(84,64,1)
+	make_obstacle(136,64,1)
 	make_ring(136,rnd(100),1)
 end
 
@@ -212,6 +215,13 @@ function make_obstacle(x,y,d)
 	return o
 end
 
+function make_enemy(x,y,d)
+    enemies += 1
+    local e = make_actor(4,x,y,d,1,1)
+    e.frame = 44
+    return e
+end
+
 function make_ring(x,y,d)
 	rings = rings + 1
 	if(y > 120) then x = 120 end
@@ -258,9 +268,13 @@ function collide(a1, a2)
  if (a1==a2) then return end
  local a1_cent = {a1.x+(a1.w/2),a1.y+(a1.h/2)}
  local a2_cent = {a2.x+(a2.w/2),a2.y+(a2.h/2)}
- local dist = 100
- dist = sqrt((a2_cent[1] - a1_cent[1])*(a2_cent[1] - a1_cent[1]) + (a2_cent[2] - a1_cent[2])*(a2_cent[2] - a1_cent[2]))
- if dist < (a1.w + a2.w)*2 then
+ local dist = sqrt((a2_cent[1] - a1_cent[1])*
+                   (a2_cent[1] - a1_cent[1]) + 
+                   (a2_cent[2] - a1_cent[2])*
+                   (a2_cent[2] - a1_cent[2]))
+ if(a2.kind == 4)then 
+    printh("dist: "..dist.."/ x: "..a2.x)  end
+ if dist < (a1.w + a2.w)*2 and dist >= 0 then
 	collide_event(a1, a2)
  end	
 end
@@ -279,9 +293,8 @@ function collide_event(a1,a2)
   player.score += 1
   timer += .8
   del(actors,a2)
- end
- if a2.kind == 2 then
-	player.life = 0
+ elseif a2.kind == 2 or a2.kind == 4 then
+    player.life = 0
  end
 end
  
@@ -304,7 +317,11 @@ function update_ring(r)
 end
 
 function move_obstacle(o)
-	
+	o.dx = -0.5
+    if(o.x < -8) then 
+        o.x = 136
+        o.y = player.y
+    end
 end
 
 function move_car(c)
@@ -312,7 +329,10 @@ function move_car(c)
 end
 
 function move_enemy(e)
-	
+	e.dx = -1
+    e.dy = 1
+    if(e.x < -8) then e.x = 136 end
+    if(e.y > 120) then e.y = -30 - rnd(30) end
 end
 
 function move_actor(actor)
@@ -353,7 +373,7 @@ function move_map()
 end
 
 function check_win_lose()
-	if(player.score == 5)then next = true end
+	if(player.score == 20)then next = true end
 	if next then
 		level += 1
 		next = false
@@ -384,9 +404,13 @@ function _update60()
 	collisions()
 	--check for win/lose
 	check_win_lose()
-	if(x_dist%120 == 0 and rings < max_rings and level==1) then
+	if(x_dist%108 == 0 and rings < max_rings and level==1) then
 		make_ring(136,prev_r.y + 20 - rnd(40),1)
 	end
+    if(x_dist%108 == 0 and enemies < max_enemies and level==1) then
+        make_enemy(140,-60 + rnd(60),1)
+	end
+    
 end
 
 function draw_actor(a)
@@ -454,13 +478,13 @@ ff0ff0ff7767767708810080000044444ffffffffffffffff0000000000000000003033003000030
 00811100777777771111000000000000ffffffffffffff0000000000999999990003033003000030080101000077700000000000000000000077700000000000
 088111007767767700011f00000000000fffffff5fffff0000000000000000000000330000333300080808000000000000000000000000000000000000000000
 080111007777777700011f000000000000ffffff5555550000000000000000000000000000000000000000000000000000000000000000000000000000000000
-080aaa00cccccccccccccccc0000000000fffffffffffff055555555555555550000000000000000555555550022222000000000000000000000000000000000
-08088800cccccccc77cccccc0000000000ffffffffffffff57777777777777750003300000bbbba055555555022fff2200000000000000000000000000000000
-08088800cccccccc7777cccc000000000fffffffffffffff5776776777677675000330000b000aaa5555555502fffff200000000000000000000000000000000
-08001100cccccccc777777cc00000000ffffffffffffffff5777777777777775000330000b0000a05555555502fffff200000000000000000000000000000000
-08001100cccccccc777777cc0000000fffffffffffff00005776776777677675000330000b0000b055555555022fff2000000000000000000000000000000000
-08001100cccccccc666666cc0000011fffffffffffff00005777777777777775000330000b0000b055555555002fff2000000000000000000000000000000000
-08008800cccccccc666666cc00001111111ffff11fff000057767767776776750003300000bbbb00555555550022222000000000000000000000000000000000
+080aaa00cccccccccccccccc0000000000fffffffffffff055555555555555550000000000000000555555550022222000888880000000000000000000000000
+08088800cccccccc77cccccc0000000000ffffffffffffff57777777777777750003300000bbbba055555555022fff22088fff88000000000000000000000000
+08088800cccccccc7777cccc000000000fffffffffffffff5776776777677675000330000b000aaa5555555502fffff208f8f8f8000000000000000000000000
+08001100cccccccc777777cc00000000ffffffffffffffff5777777777777775000330000b0000a05555555502fffff208fffff8000000000000000000000000
+08001100cccccccc777777cc0000000fffffffffffff00005776776777677675000330000b0000b055555555022fff20088f8f80000000000000000000000000
+08001100cccccccc666666cc0000011fffffffffffff00005777777777777775000330000b0000b055555555002fff20008fff80000000000000000000000000
+08008800cccccccc666666cc00001111111ffff11fff000057767767776776750003300000bbbb00555555550022222000888880000000000000000000000000
 00000000cccccccccccccccc01111111111111111111111057777777777777750000000000000000555555550000000000000000000000000000000000000000
 cccccccccccccccc0000000111111111111111111111111110000000000000000000000000000000555555550000000000000000000000000000000000000000
 c777c77cccccccc700001111111111188888888888888888111100000000000000330000000000a0555555550000000000000000000000000000000000000000
