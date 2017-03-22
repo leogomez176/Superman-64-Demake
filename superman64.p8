@@ -247,6 +247,9 @@ function check_win_lose()
 end
 
 function _update60()
+if(player.life == 0) then
+ if btn(4) then player.life = 1 _init() end
+end
 	--move actors
 	foreach(actors, move_actor)
 	--move effects
@@ -281,6 +284,12 @@ function draw_map_block(b)
 end
 
 function _draw()
+ if player.life == 0 then
+ cls()
+	print("hit z to try again!",50,50)
+ spr(3,7,95,3,5)
+ spr(50,0,120,6,1)
+ else 
  cls()
  --set camera
  --draw background
@@ -290,6 +299,7 @@ function _draw()
  print("“:" .. flr(timer),10,10,8)
  --draw hud
  --draw end result
+ end
 end
 
 __gfx__
@@ -570,10 +580,6 @@ __music__
 00 39393c3b
 00 39393c3b
 02 3d3e3f03
-<<<<<<< HEAD
-00 41424344
-=======
->>>>>>> origin/master
 00 41424344
 00 41424344
 00 41424344
@@ -591,8 +597,5 @@ __music__
 00 41424344
 00 41424344
 00 41424344
-<<<<<<< HEAD
-=======
 00 41424344
->>>>>>> origin/master
 
