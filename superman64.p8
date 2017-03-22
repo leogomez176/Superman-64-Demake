@@ -28,7 +28,7 @@ function _init()
 	next = false
 	power_dir = 1
 	make_levels()	
-	run_level2()
+	run_level1()
 	music(0) 
 end
 
@@ -136,7 +136,7 @@ end
 
 function run_level1()
 	level = 1
-    timer = 26
+ timer = 26
 	actors={}
 	currentlvl = level1
 	player = make_player(64,64,1)
@@ -145,6 +145,7 @@ function run_level1()
 end
 
 function run_level2()
+ rings = 0
 	timer = 6
 	level = 2
 	actors = {}
@@ -152,10 +153,6 @@ function run_level2()
 	player = make_player(20,90,1)
 	hoop = make_hoop (88,32,1)
 	car = make_car(20,64,1)
-end
-
-function run_level3()
-	currentlvl = level3
 end
 
 function make_map_block(kind,x,y,lvl)
@@ -306,8 +303,8 @@ function collide_event(a1,a2)
  elseif a2.kind == 2 or a2.kind == 4 then
     player.life = 0
  elseif a2.kind == 5 then
-	player.score += 10
-	run_level1()
+	score += 10
+	next = true
  end
 end
  
@@ -408,20 +405,24 @@ function move_map()
 end
 
 function check_win_lose()
-	if(score == 15)then next = true end
+	if(player.score == 5 and level==1)then next = true end
 	if next then
 		level += 1
+		if(level >2)then level=1 end
 		next = false
 		if (level==1) then 
+		active = false
 			run_level1()
 		elseif(level==2) then 
 			run_level2()
-		elseif(level==3) then 
-			run_level3()
+			player.score = 0
 		end
 	end
-	if timer < 1 then
+	if(timer < 1 and level == 1) then
 		player.life = 0
+	end
+	if(timer < 1 and level == 2) then
+	 next = true
 	end
 end
 
@@ -492,7 +493,7 @@ function _draw()
 	print("“:" .. flr(timer),10,10,8)
 print("score:" .. score,90,10,8)
 	if(level == 2) then
-		print("Power: " .. car.power,7,105,8)
+		print("power: " .. car.power,7,105,8)
 	end
 	--draw hud
 	--draw end result
