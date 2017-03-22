@@ -230,7 +230,11 @@ end
 
 function collide(a1, a2)
  if (a1==a2) then return end
- if a1.x + a1.w > a2.x and a2.x + a2.w > a1.x and a1.y + a1.h > a2.y and a2.y + a2.h > a1.y then
+ local a1_cent = {a1.x+(a1.w/2),a1.y+(a1.h/2)}
+ local a2_cent = {a2.x+(a2.w/2),a2.y+(a2.h/2)}
+ local dist = 100
+ dist = sqrt((a2_cent[1] - a1_cent[1])*(a2_cent[1] - a1_cent[1]) + (a2_cent[2] - a1_cent[2])*(a2_cent[2] - a1_cent[2]))
+ if dist < (a1.w + a2.w)*2 then
 	collide_event(a1, a2)
  end	
 end
@@ -245,10 +249,8 @@ end
 function collide_event(a1,a2)
  if a2.kind == 1 then
   a2.i = 100
-  rings -= 1
   timer += .8
   del(actors,a2)
-  
  end 
 end
  
