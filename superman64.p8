@@ -23,9 +23,12 @@ function _init()
 	timer = 6
 	max_rings = 5
     max_enemies = 5
+	once = false
+	active = false
 	next = false
-	make_levels() 
-	run_level1()
+	power_dir = 1
+	make_levels()	
+	run_level2()
 	music(0) 
 end
 
@@ -146,9 +149,9 @@ function run_level2()
 	level = 2
 	actors = {}
 	currentlvl = level2
-	player = make_player(64,90,1)
+	player = make_player(20,90,1)
 	hoop = make_hoop (88,32,1)
-	make_car(64,64,1)
+	car = make_car(20,64,1)
 end
 
 function run_level3()
@@ -177,7 +180,7 @@ function make_actor(kind,x,y,d,w,h)
 	a.kind = kind
 	a.life = 1
 	a.x=x a.y=y a.dx=0 a.dy=0
-	a.ddy=0.06 --gravity
+	a.ddy=0.00 --gravity
 	a.w=w a.h=h
 	a.d=d
  add(actors,a)
@@ -201,6 +204,7 @@ end
 function make_car(x,y,d)
 	local c = make_actor(3,x,y,d,4,2)
 	c.frame = 11
+	c.power = 0
 	return c
 end
 
@@ -225,8 +229,8 @@ end
 
 function make_ring(x,y,d)
 	rings = rings + 1
-	if(y > 120) then x = 120 end
-	if(y < 5) then x = 5 end
+	if(y > 110) then x = 120 end
+	if(y < 10) then x = 5 end
 	local r = make_actor(1,x,y,d,1,1)
 	r.frame = 25
 	r.i = 0
@@ -254,12 +258,11 @@ function move_player(p1)
 		if(btn(3))then
 			p1.dy = p1.dy + accel end 
 	elseif(level==2)then
-		if(btn(0))then
-			p1.dx = p1.dx - accel; p1.d=0 end
-		if(btn(1))then
-			p1.dx = p1.dx + accel; p1.d=1 end
-		if(btn(2))then
-			p1.d=2 end
+		p1.d=2
+		if(btnp(5))then
+			once = true;
+			active = true;
+		end
 	end
 	x_dist += 1.5
 end
@@ -285,6 +288,9 @@ function collisions()
  for a in all(actors) do
   collide(player,a)
  end
+ if(level==2)then
+	collide(car,hoop)
+ end
 end
 
 function collide_event(a1,a2)
@@ -295,8 +301,13 @@ function collide_event(a1,a2)
   timer += .8
   del(actors,a2)
   score = score + 1
+  sfx(52)
+  sfx(53)
  elseif a2.kind == 2 or a2.kind == 4 then
     player.life = 0
+ elseif a2.kind == 5 then
+	player.score += 10
+	run_level1()
  end
 end
  
@@ -332,6 +343,24 @@ function move_car(c)
     else
         c.dy = 0
     end
+	if(once)then
+		c.dy -= c.power
+		once = false
+	end
+	if(active)then 
+		c.dx = 1
+		c.ddy = 0.06
+	end
+	if(c.power < 5 and power_dir == 1) then
+		c.power += .03
+	else
+		power_dir = -1
+	end
+	if(c.power > .0001 and power_dir == -1) then
+		c.power -= .03
+	else
+		power_dir = 1
+	end
 end
 
 function move_enemy(e)
@@ -379,7 +408,7 @@ function move_map()
 end
 
 function check_win_lose()
-	if(player.score == 20)then next = true end
+	if(score == 15)then next = true end
 	if next then
 		level += 1
 		next = false
@@ -416,7 +445,6 @@ function _update60()
     if(x_dist%108 == 0 and enemies < max_enemies and level==1) then
         make_enemy(140,-60 + rnd(60),1)
 	end
-    
 end
 
 function draw_actor(a)
@@ -463,6 +491,9 @@ function _draw()
 	foreach(actors,draw_actor)
 	print("“:" .. flr(timer),10,10,8)
 print("score:" .. score,90,10,8)
+	if(level == 2) then
+		print("Power: " .. car.power,7,105,8)
+	end
 	--draw hud
 	--draw end result
  end
