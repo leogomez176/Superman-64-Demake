@@ -20,8 +20,8 @@ function _init()
 	timer = 6
 	next = false
 	make_levels() 
-	run_level2()
-	music(0)
+	run_level1()
+	music(0) 
 end
 
 function make_levels()
@@ -222,7 +222,7 @@ function move_player(p1)
 		if(btn(2))then
 			p1.dy = p1.dy - accel end
 		if(btn(3))then
-			p1.dy = p1.dy + accel end	
+			p1.dy = p1.dy + accel end 
 	elseif(level==2)then
 		if(btn(0))then
 			p1.dx = p1.dx - accel; p1.d=0 end
@@ -234,15 +234,16 @@ function move_player(p1)
 	x_dist += 1
 end
 
+
 function collide(a1, a2)
  if (a1==a2) then return end
- local dx = a1.x - a2.x
- local dy = a1.y - a2.y
- if (abs(dx) < a1.w+a2.w) then
-  if (abs(dy) < a1.h+a2.h) then
-   collide_event(a1, a2)
-  end
- end
+ local a1_cent = {a1.x+(a1.w/2),a1.y+(a1.h/2)}
+ local a2_cent = {a2.x+(a2.w/2),a2.y+(a2.h/2)}
+ local dist = 100
+ dist = sqrt((a2_cent[1] - a1_cent[1])*(a2_cent[1] - a1_cent[1]) + (a2_cent[2] - a1_cent[2])*(a2_cent[2] - a1_cent[2]))
+ if dist < (a1.w + a2.w)*2 then
+	collide_event(a1, a2)
+ end	
 end
 
 
@@ -255,10 +256,8 @@ end
 function collide_event(a1,a2)
  if a2.kind == 1 then
   a2.i = 100
-  rings -= 1
   timer += .8
   del(actors,a2)
-  
  end 
 end
  
@@ -402,6 +401,7 @@ function _draw()
 	foreach(currentlvl,draw_map_block)
 	foreach(actors,draw_actor)
 	print("“:" .. flr(timer),10,10,8)
+
 	--draw hud
 	--draw end result
  end
