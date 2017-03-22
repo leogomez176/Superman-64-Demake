@@ -15,9 +15,11 @@ function _init()
 	currentlvl ={}
 	level = 0
 	x_dist = 0
+	prev_r = {}
 	--inits
 	rings = 0
 	timer = 6
+	max_rings = 5
 	next = false
 	make_levels() 
 	run_level2()
@@ -127,12 +129,12 @@ function run_level1()
 	actors={}
 	currentlvl = level1
 	player = make_player(64,64,1)
-	for i=1,5 do
-		make_ring(rnd(100),rnd(100),1)
-	end 
+	make_obstacle(84,64,1)
+	make_ring(136,rnd(100),1)
 end
 
 function run_level2()
+	timer = 6
 	level = 2
 	actors = {}
 	currentlvl = level2
@@ -193,11 +195,20 @@ function make_car(x,y,d)
 	return c
 end
 
+function make_obstacle(x,y,d)
+	local o = make_actor(2,x,y,d,1,1)
+	o.frame = 43
+	return o
+end
+
 function make_ring(x,y,d)
- rings = rings + 1
+	rings = rings + 1
+	if(y > 120) then x = 120 end
+	if(y < 5) then x = 5 end
 	local r = make_actor(1,x,y,d,1,1)
 	r.frame = 25
 	r.i = 0
+	prev_r = r
 	return r
 end
 
@@ -228,7 +239,7 @@ function move_player(p1)
 		if(btn(2))then
 			p1.d=2 end
 	end
-	x_dist += 1
+	x_dist += 1.5
 end
 
 
@@ -253,9 +264,14 @@ end
 function collide_event(a1,a2)
  if a2.kind == 1 then
   a2.i = 100
+  rings -= 1
+  player.score += 1
   timer += .8
   del(actors,a2)
- end 
+ end
+ if a2.kind == 2 then
+	player.life = 0
+ end
 end
  
 function update_ring(r)
@@ -271,6 +287,9 @@ function update_ring(r)
 	elseif r.i >= 100 and r.i < 110 then r.frame = 41
 	elseif r.i >= 110 and r.i < 125 then r.frame = 57
 	elseif r.i == 125 then  end
+	
+	r.dx = -1.5
+	if(r.x < -8) then r.x = 136 end
 end
 
 function move_obstacle(o)
@@ -288,6 +307,10 @@ end
 function move_actor(actor)
 	if(actor.kind==0)then
 		move_player(actor)
+		if actor.x <= 0 then actor.x = 1 actor.dx = 0 end
+		if actor.x >= 110 then actor.x = 108 actor.dx = 0 end
+		if actor.y <= 0 then actor.y = 1 actor.dy = 0 end
+		if actor.y >= 120 then actor.y = 118 actor.dy = 0 end
 	end
 	
 	if(actor.kind==1)then
@@ -308,11 +331,6 @@ function move_actor(actor)
 	
 	actor.x += actor.dx
 	actor.y += actor.dy
-	
-	if actor.x <= 0 then actor.x = 1 actor.dx = 0 end
-	if actor.x >= 110 then actor.x = 108 actor.dx = 0 end
-	if actor.y <= 0 then actor.y = 1 actor.dy = 0 end
-	if actor.y >= 120 then actor.y = 118 actor.dy = 0 end
 end
 
 function move_map()
@@ -324,6 +342,7 @@ function move_map()
 end
 
 function check_win_lose()
+	if(player.score == 5)then next = true end
 	if next then
 		level += 1
 		next = false
@@ -354,6 +373,9 @@ function _update60()
 	collisions()
 	--check for win/lose
 	check_win_lose()
+	if(x_dist%120 == 0 and rings < max_rings and level==1) then
+		make_ring(136,prev_r.y + 20 - rnd(40),1)
+	end
 end
 
 function draw_actor(a)
@@ -421,13 +443,13 @@ ff0ff0ff7767767708810080000044444ffffffffffffffff0000000000000000003033003000030
 00811100777777771111000000000000ffffffffffffff0000000000999999990003033003000030080101000077700000000000000000000077700000000000
 088111007767767700011f00000000000fffffff5fffff0000000000000000000000330000333300080808000000000000000000000000000000000000000000
 080111007777777700011f000000000000ffffff5555550000000000000000000000000000000000000000000000000000000000000000000000000000000000
-080aaa00cccccccccccccccc0000000000fffffffffffff055555555555555550000000000000000555555550000000000000000000000000000000000000000
-08088800cccccccc77cccccc0000000000ffffffffffffff57777777777777750003300000bbbba0555555550000000000000000000000000000000000000000
-08088800cccccccc7777cccc000000000fffffffffffffff5776776777677675000330000b000aaa555555550000000000000000000000000000000000000000
-08001100cccccccc777777cc00000000ffffffffffffffff5777777777777775000330000b0000a0555555550000000000000000000000000000000000000000
-08001100cccccccc777777cc0000000fffffffffffff00005776776777677675000330000b0000b0555555550000000000000000000000000000000000000000
-08001100cccccccc666666cc0000011fffffffffffff00005777777777777775000330000b0000b0555555550000000000000000000000000000000000000000
-08008800cccccccc666666cc00001111111ffff11fff000057767767776776750003300000bbbb00555555550000000000000000000000000000000000000000
+080aaa00cccccccccccccccc0000000000fffffffffffff055555555555555550000000000000000555555550022222000000000000000000000000000000000
+08088800cccccccc77cccccc0000000000ffffffffffffff57777777777777750003300000bbbba055555555022fff2200000000000000000000000000000000
+08088800cccccccc7777cccc000000000fffffffffffffff5776776777677675000330000b000aaa5555555502fffff200000000000000000000000000000000
+08001100cccccccc777777cc00000000ffffffffffffffff5777777777777775000330000b0000a05555555502fffff200000000000000000000000000000000
+08001100cccccccc777777cc0000000fffffffffffff00005776776777677675000330000b0000b055555555022fff2000000000000000000000000000000000
+08001100cccccccc666666cc0000011fffffffffffff00005777777777777775000330000b0000b055555555002fff2000000000000000000000000000000000
+08008800cccccccc666666cc00001111111ffff11fff000057767767776776750003300000bbbb00555555550022222000000000000000000000000000000000
 00000000cccccccccccccccc01111111111111111111111057777777777777750000000000000000555555550000000000000000000000000000000000000000
 cccccccccccccccc0000000111111111111111111111111110000000000000000000000000000000555555550000000000000000000000000000000000000000
 c777c77cccccccc700001111111111188888888888888888111100000000000000330000000000a0555555550000000000000000000000000000000000000000
