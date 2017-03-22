@@ -307,8 +307,11 @@ function move_obstacle(o)
 	
 end
 
-function move_car(c)
-	
+function move_car(c,f)
+	local delta_x = sqrt(2)/2*f
+	local delta_y = sqrt(2)/2*f
+	c.dx = c.dx + delta_x
+	c.dy = c.dy + delta_y
 end
 
 function move_enemy(e)
