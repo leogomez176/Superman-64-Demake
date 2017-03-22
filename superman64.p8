@@ -46,13 +46,80 @@ function make_levels()
 			make_map_block(33,i*8,j*8,1)
 		end
 	end
-	--level2
-	for i=0,16 do
+	--lvl1 block 2
+	for i=0,4 do
 		for j=0,16 do
+			make_map_block(33,128+i*8,j*8,1)
+		end
+	end
+	for i=5,13 do
+		for j=0,10 do
+			make_map_block(33,128+i*8,j*8,1)
+		end
+	end
+	for i=5,13 do
+		for j=11,16 do
+			make_map_block(17,128+i*8,j*8,1)
+		end
+	end
+	for i = 13,16 do
+		for j=0,16 do
+			make_map_block(33,128+i*8,j*8,1)
+		end
+	end
+	--lvl1 block 3
+	for i=0,4 do
+		for j=0,16 do
+			make_map_block(33,128*2+i*8,j*8,1)
+		end
+	end
+	for i=5,13 do
+		for j=0,6 do
+			make_map_block(33,128*2+i*8,j*8,1)
+		end
+	end
+	for i=5,13 do
+		for j=7,16 do
+			make_map_block(17,128*2+i*8,j*8,1)
+		end
+	end
+	for i = 13,16 do
+		for j=0,16 do
+			make_map_block(33,128*2+i*8,j*8,1)
+		end
+	end
+	
+	--level2
+	for i=0,6 do
+		for j=0,12 do
 			make_map_block(33,i*8,j*8,2)
 		end
 	end
+	for i=7,12 do
+		for j=0,12 do
+			make_map_block(17,i*8,j*8,2)
+		end
+	end
+	for i=13,16 do
+		for j=0,12 do
+			make_map_block(33,i*8,j*8,2)
+		end
+	end
+	for i=0,16 do
+		make_map_block(42,i*8,13*8,2)
+	end
+	for i=0,16 do
+		make_map_block(58,i*8,14*8,2)
+	end
+	for i=0,16 do
+		make_map_block(42,i*8,15*8,2)
+	end
 	--level3
+	for i=0,16 do
+		for j=0,16 do
+			make_map_block(33,i*8,j*8,3)
+		end
+	end
 end
 
 function run_level1()
@@ -119,7 +186,6 @@ function make_player(x,y,d)
 	end
 	p1.score = 0
 	p1.id = 0 --player 1
-	
 	return p1
 end
 
@@ -147,9 +213,9 @@ function move_player(p1)
 		if(btn(1))then
 			p1.dx = p1.dx + accel; p1.d=1 end
 		if(btn(2))then
-			p1.dy = p1.dy - accel; p1.d=2 end
+			p1.dy = p1.dy - accel end
 		if(btn(3))then
-			p1.dy = p1.dy + accel; p1.d=3 end	
+			p1.dy = p1.dy + accel end	
 	elseif(level==2)then
 		if(btn(0))then
 			p1.dx = p1.dx - accel; p1.d=0 end
@@ -157,8 +223,6 @@ function move_player(p1)
 			p1.dx = p1.dx + accel; p1.d=1 end
 		if(btn(2))then
 			p1.d=2 end
-		if(btn(3))then
-			p1.d=3 end
 	end
 	x_dist += 1
 end
@@ -185,9 +249,7 @@ function collide_event(a1,a2)
  if a2.kind == 1 then
   a2.i = 100
   rings -= 1
-  timer += .8
-  del(actors,a2)
-  
+  timer += .5r
  end 
 end 
  
@@ -203,7 +265,7 @@ function update_ring(r)
 	elseif r.i > 30 and r.i <= 40 then r.frame = 25
 	elseif r.i >= 100 and r.i < 110 then r.frame = 41
 	elseif r.i >= 110 and r.i < 125 then r.frame = 57
-	elseif r.i == 125 then  end
+	elseif r.i == 125 then del(actors,r) end
 	end
 
 function move_obstacle(o)
@@ -249,10 +311,9 @@ function move_actor(actor)
 end
 
 function move_map()
-	if x_dist%5 == 0 and level==1 then
-		for b in all(level1) do
-			b.x -= 8
-			if(b.x < 0)then b.x = 120 end
+	if level==1 then
+		for b in all(currentlvl) do
+			if(b.x-x_dist < -8)then b.x += 128*2+136 end
 		end
 	end
 end
@@ -275,9 +336,6 @@ function check_win_lose()
 end
 
 function _update60()
-if(player.life == 0) then
- if btn(4) then player.life = 1 _init() end
-end
 	--move actors
 	foreach(actors, move_actor)
 	--move effects
@@ -286,9 +344,6 @@ end
 	collisions()
 	--check for win/lose
 	check_win_lose()
-	if(rings < 5) then 
-	make_ring(rnd(100),rnd(100),1)
-	end
 end
 
 function draw_actor(a)
@@ -305,19 +360,13 @@ end
 
 function draw_map_block(b)
 	spr(b.kind,
-	    b.x,
+	    b.x-x_dist,
 		b.y,
 		b.w,
 		b.h)
 end
 
 function _draw()
- if player.life == 0 then
- cls()
-	print("hit z to try again!",50,50)
- spr(3,7,95,3,5)
- spr(50,0,120,6,1)
- else 
  cls()
  --set camera
  --draw background
@@ -327,7 +376,6 @@ function _draw()
  print("“:" .. flr(timer),10,10,8)
  --draw hud
  --draw end result
- end
 end
 
 __gfx__
