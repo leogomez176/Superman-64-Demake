@@ -295,7 +295,6 @@ function collide_event(a1,a2)
   a2.i = 100
   rings -= 1
   player.score += 1
-  timer += .8
   del(actors,a2)
   score = score + 1
   sfx(52)
@@ -444,7 +443,7 @@ function _update60()
 		make_ring(136,prev_r.y + 20 - rnd(40),1)
 	end
     if(x_dist%108 == 0 and enemies < max_enemies and level==1) then
-        make_enemy(140,-60 + rnd(60),1)
+        	make_enemy(140,-60 + rnd(60),1)
 	end
 end
 
